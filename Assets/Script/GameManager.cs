@@ -6,7 +6,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
 
-/// Manages score, Stage 3 coins, UI, win screen, game over screen, and restart.
+/// Manages the game score, UI, win screen, game over screen, and restart.
 public class GameManager : MonoBehaviour
 {
     /// Allows other scripts to access the GameManager.
@@ -39,11 +39,18 @@ public class GameManager : MonoBehaviour
     /// Number of Stage 3 coins needed to unlock the door.
     [SerializeField] private int stage3CoinsNeeded = 4;
 
+    /// Checks if the game has ended.
+    private bool gameEnded;
+
     /// Sets up the GameManager when the game starts.
     private void Awake()
     {
         instance = this;
         Time.timeScale = 1f;
+        gameEnded = false;
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
 
         if (winPanel != null)
         {
@@ -64,8 +71,16 @@ public class GameManager : MonoBehaviour
         ShowMessage("Collect coins and reach the finish line!");
     }
 
+    /// Checks for restart input after the game ends.
+    private void Update()
+    {
+        if (gameEnded && Input.GetKeyDown(KeyCode.R))
+        {
+            RestartGame();
+        }
+    }
+
     /// Adds score when the player collects a coin.
-    /// <param name="amount">Amount of score to add.</param>
     public void AddScore(int amount)
     {
         score += amount;
@@ -89,14 +104,12 @@ public class GameManager : MonoBehaviour
     }
 
     /// Checks whether the Stage 3 door can open.
-    /// <returns>True if all 4 Stage 3 coins are collected.</returns>
     public bool CanOpenStage3Door()
     {
         return stage3Coins >= stage3CoinsNeeded;
     }
 
     /// Shows a message on the screen.
-    /// <param name="message">Message to show.</param>
     public void ShowMessage(string message)
     {
         if (messageText != null)
@@ -117,6 +130,8 @@ public class GameManager : MonoBehaviour
     /// Shows the win screen when the player reaches the finish line.
     public void WinGame()
     {
+        gameEnded = true;
+
         if (winPanel != null)
         {
             winPanel.SetActive(true);
@@ -124,22 +139,32 @@ public class GameManager : MonoBehaviour
 
         if (finalScoreText != null)
         {
-            finalScoreText.text = "You reached the finish line!\nTotal Score: " + score;
+            finalScoreText.text = "You reached the finish line!\nTotal Score: " + score + "\nPress R to restart";
         }
 
         ShowMessage("You reached the finish line!");
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         Time.timeScale = 0f;
     }
 
     /// Shows the game over screen when the player dies.
     public void GameOver()
     {
+        gameEnded = true;
+
         if (gameOverPanel != null)
         {
             gameOverPanel.SetActive(true);
         }
 
-        ShowMessage("Game Over!");
+        ShowMessage("Game Over! Press R to restart");
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         Time.timeScale = 0f;
     }
 
@@ -147,6 +172,10 @@ public class GameManager : MonoBehaviour
     public void RestartGame()
     {
         Time.timeScale = 1f;
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
