@@ -12,7 +12,7 @@ public class DamageHazard : MonoBehaviour
     /// <summary>
     /// Damage done every second.
     /// </summary>
-    [SerializeField] private float damagePerSecond = 20f;
+    [SerializeField] private float damagePerSecond = 50f;
 
     /// <summary>
     /// Damages player while inside the trigger.
@@ -20,14 +20,16 @@ public class DamageHazard : MonoBehaviour
     /// <param name="other">Object inside the trigger.</param>
     private void OnTriggerStay(Collider other)
     {
-        if (other.CompareTag("Player"))
-        {
-            PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
+        PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
 
-            if (playerHealth != null)
-            {
-                playerHealth.TakeDamage(damagePerSecond * Time.deltaTime);
-            }
+        if (playerHealth == null)
+        {
+            playerHealth = other.GetComponentInParent<PlayerHealth>();
+        }
+
+        if (playerHealth != null)
+        {
+            playerHealth.TakeDamage(damagePerSecond * Time.deltaTime);
         }
     }
 }
