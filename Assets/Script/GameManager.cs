@@ -1,12 +1,14 @@
 /*
-* Description: Controls score, stage 3 coin count, and UI messages.
+* Author: Your Name
+* Date: 2026
+* Description: Controls score, stage 3 coin count, UI messages, win screen, and game over screen.
 */
 
 using UnityEngine;
 using TMPro;
 
 /// <summary>
-/// Manages the score, Stage 3 coin count, and game UI.
+/// Manages score, Stage 3 coins, UI, win screen, and game over screen.
 /// </summary>
 public class GameManager : MonoBehaviour
 {
@@ -21,22 +23,27 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TMP_Text scoreText;
 
     /// <summary>
-    /// Text that shows Stage 3 coins collected.
+    /// Text that shows the Stage 3 coin progress.
     /// </summary>
     [SerializeField] private TMP_Text stage3CoinText;
 
     /// <summary>
-    /// Text that shows messages to the player.
+    /// Text that shows small messages to the player.
     /// </summary>
     [SerializeField] private TMP_Text messageText;
 
     /// <summary>
-    /// Panel shown when the player wins.
+    /// Text that shows the final score on the win screen.
+    /// </summary>
+    [SerializeField] private TMP_Text finalScoreText;
+
+    /// <summary>
+    /// Panel that appears when the player wins.
     /// </summary>
     [SerializeField] private GameObject winPanel;
 
     /// <summary>
-    /// Panel shown when the player loses.
+    /// Panel that appears when the player dies.
     /// </summary>
     [SerializeField] private GameObject gameOverPanel;
 
@@ -56,7 +63,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int stage3CoinsNeeded = 4;
 
     /// <summary>
-    /// Sets up the GameManager.
+    /// Sets up the GameManager when the game starts.
     /// </summary>
     private void Awake()
     {
@@ -75,17 +82,17 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Updates UI at the start.
+    /// Updates the UI at the start of the game.
     /// </summary>
     private void Start()
     {
         UpdateScoreUI();
         UpdateStage3CoinUI();
-        ShowMessage("Collect coins and reach the end!");
+        ShowMessage("Collect coins and reach the finish line!");
     }
 
     /// <summary>
-    /// Adds score when a coin is collected.
+    /// Adds score when the player collects a coin.
     /// </summary>
     /// <param name="amount">Amount of score to add.</param>
     public void AddScore(int amount)
@@ -95,7 +102,7 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Adds one Stage 3 coin.
+    /// Adds one Stage 3 coin to the count.
     /// </summary>
     public void AddStage3Coin()
     {
@@ -106,19 +113,23 @@ public class GameManager : MonoBehaviour
         {
             ShowMessage("All Stage 3 coins collected. Door unlocked!");
         }
+        else
+        {
+            ShowMessage("Stage 3 coin collected!");
+        }
     }
 
     /// <summary>
-    /// Checks if the Stage 3 door can open.
+    /// Checks whether the Stage 3 door can open.
     /// </summary>
-    /// <returns>True if enough Stage 3 coins are collected.</returns>
+    /// <returns>True if all 4 Stage 3 coins are collected.</returns>
     public bool CanOpenStage3Door()
     {
         return stage3Coins >= stage3CoinsNeeded;
     }
 
     /// <summary>
-    /// Shows a message on screen.
+    /// Shows a message on the screen.
     /// </summary>
     /// <param name="message">Message to show.</param>
     public void ShowMessage(string message)
@@ -141,7 +152,7 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Shows the win screen.
+    /// Shows the win screen when the player reaches the finish line.
     /// </summary>
     public void WinGame()
     {
@@ -150,11 +161,17 @@ public class GameManager : MonoBehaviour
             winPanel.SetActive(true);
         }
 
+        if (finalScoreText != null)
+        {
+            finalScoreText.text = "You reached the finish line!\nTotal Score: " + score;
+        }
+
         ShowMessage("You reached the finish line!");
+        Time.timeScale = 0f;
     }
 
     /// <summary>
-    /// Shows the game over screen.
+    /// Shows the game over screen when the player dies.
     /// </summary>
     public void GameOver()
     {
@@ -168,7 +185,7 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Updates the score UI.
+    /// Updates the score text.
     /// </summary>
     private void UpdateScoreUI()
     {
@@ -179,7 +196,7 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Updates the Stage 3 coin UI.
+    /// Updates the Stage 3 coin text.
     /// </summary>
     private void UpdateStage3CoinUI()
     {
