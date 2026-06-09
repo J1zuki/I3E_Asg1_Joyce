@@ -1,4 +1,6 @@
 /*
+* Author: Your Name
+* Date: 2026
 * Description: Opens the Stage 3 door only after 4 Stage 3 coins are collected.
 */
 
@@ -10,12 +12,12 @@ using UnityEngine;
 public class Stage3Door : MonoBehaviour
 {
     /// <summary>
-    /// The door object that rotates open.
+    /// The actual door object that will move open.
     /// </summary>
     [SerializeField] private Transform doorObject;
 
     /// <summary>
-    /// The collider blocking the player.
+    /// The collider that blocks the player.
     /// </summary>
     [SerializeField] private Collider doorCollider;
 
@@ -25,12 +27,12 @@ public class Stage3Door : MonoBehaviour
     [SerializeField] private KeyCode openKey = KeyCode.E;
 
     /// <summary>
-    /// Door open angle.
+    /// How far the door moves when it opens.
     /// </summary>
-    [SerializeField] private Vector3 openAngle = new Vector3(0f, 90f, 0f);
+    [SerializeField] private Vector3 openOffset = new Vector3(0f, 4f, 0f);
 
     /// <summary>
-    /// Door opening speed.
+    /// Speed of the door opening.
     /// </summary>
     [SerializeField] private float openSpeed = 3f;
 
@@ -40,41 +42,47 @@ public class Stage3Door : MonoBehaviour
     [SerializeField] private AudioClip openSound;
 
     /// <summary>
-    /// Sound played when the door is locked.
+    /// Sound played when the door is still locked.
     /// </summary>
     [SerializeField] private AudioClip lockedSound;
 
     /// <summary>
-    /// Checks if player is near the door.
+    /// Checks if the player is near the door trigger.
     /// </summary>
     private bool playerNear;
 
     /// <summary>
-    /// Checks if the door is already open.
+    /// Checks if the door is opened.
     /// </summary>
     private bool opened;
 
     /// <summary>
-    /// Door closed rotation.
+    /// Door closed position.
     /// </summary>
-    private Quaternion closedRotation;
+    private Vector3 closedPosition;
 
     /// <summary>
-    /// Door opened rotation.
+    /// Door opened position.
     /// </summary>
-    private Quaternion openedRotation;
+    private Vector3 openedPosition;
 
     /// <summary>
-    /// Sets the door rotations.
+    /// Sets up the door position.
     /// </summary>
     private void Start()
     {
-        closedRotation = doorObject.rotation;
-        openedRotation = closedRotation * Quaternion.Euler(openAngle);
+        if (doorObject == null)
+        {
+            Debug.LogError("Door Object is missing. Drag the actual Door into Door Object.");
+            return;
+        }
+
+        closedPosition = doorObject.position;
+        openedPosition = closedPosition + openOffset;
     }
 
     /// <summary>
-    /// Checks input and opens door if allowed.
+    /// Checks for input and moves the door when opened.
     /// </summary>
     private void Update()
     {
@@ -83,19 +91,23 @@ public class Stage3Door : MonoBehaviour
             TryOpenDoor();
         }
 
-        if (opened)
+        if (opened && doorObject != null)
         {
-            doorObject.rotation = Quaternion.Lerp(doorObject.rotation, openedRotation, Time.deltaTime * openSpeed);
+            doorObject.position = Vector3.Lerp(
+                doorObject.position,
+                openedPosition,
+                Time.deltaTime * openSpeed
+            );
         }
     }
 
     /// <summary>
-    /// Detects when player enters door trigger.
+    /// Detects when the player enters the door trigger.
     /// </summary>
     /// <param name="other">Object that entered the trigger.</param>
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (IsPlayer(other))
         {
             playerNear = true;
 
@@ -107,12 +119,12 @@ public class Stage3Door : MonoBehaviour
     }
 
     /// <summary>
-    /// Detects when player exits door trigger.
+    /// Detects when the player leaves the door trigger.
     /// </summary>
     /// <param name="other">Object that exited the trigger.</param>
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (IsPlayer(other))
         {
             playerNear = false;
 
@@ -124,7 +136,17 @@ public class Stage3Door : MonoBehaviour
     }
 
     /// <summary>
-    /// Opens the door if 4 Stage 3 coins are collected.
+    /// Checks if the object belongs to the player.
+    /// </summary>
+    /// <param name="other">Collider to check.</param>
+    /// <returns>True if the collider belongs to the player.</returns>
+    private bool IsPlayer(Collider other)
+    {
+        return other.CompareTag("Player") || other.GetComponentInParent<PlayerHealth>() != null;
+    }
+
+    /// <summary>
+    /// Opens the door if all 4 Stage 3 coins are collected.
     /// </summary>
     private void TryOpenDoor()
     {
