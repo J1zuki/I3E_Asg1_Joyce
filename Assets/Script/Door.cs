@@ -1,6 +1,4 @@
 /*
-* Author: Your Name
-* Date: 2026
 * Description: Opens the Stage 3 door only after 4 Stage 3 coins are collected.
 */
 
