@@ -1,4 +1,6 @@
 /*
+* Author: Your Name
+* Date: 2026
 * Description: Allows the player to collect coins by pressing E.
 */
 
@@ -25,7 +27,7 @@ public class CoinCollect : MonoBehaviour
     [SerializeField] private KeyCode collectKey = KeyCode.E;
 
     /// <summary>
-    /// Sound played when coin is collected.
+    /// Sound played when the coin is collected.
     /// </summary>
     [SerializeField] private AudioClip collectSound;
 
@@ -35,7 +37,7 @@ public class CoinCollect : MonoBehaviour
     private bool playerNear;
 
     /// <summary>
-    /// Checks if the coin is already collected.
+    /// Checks if the coin has already been collected.
     /// </summary>
     private bool collected;
 
@@ -51,12 +53,12 @@ public class CoinCollect : MonoBehaviour
     }
 
     /// <summary>
-    /// Detects when player enters the coin trigger.
+    /// Detects when the player enters the coin trigger.
     /// </summary>
     /// <param name="other">Object that entered the trigger.</param>
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") || other.GetComponentInParent<PlayerHealth>() != null)
         {
             playerNear = true;
 
@@ -68,12 +70,12 @@ public class CoinCollect : MonoBehaviour
     }
 
     /// <summary>
-    /// Detects when player leaves the coin trigger.
+    /// Detects when the player leaves the coin trigger.
     /// </summary>
-    /// <param name="other">Object that left the trigger.</param>
+    /// <param name="other">Object that exited the trigger.</param>
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") || other.GetComponentInParent<PlayerHealth>() != null)
         {
             playerNear = false;
 
