@@ -1,13 +1,13 @@
 /*
 * Author: Your Name
 * Date: 2026
-* Description: Opens the Stage 3 door animation with E after 4 Stage 3 coins are collected.
+* Description: Opens the Stage 3 door with E after 4 coins, and closes it when player walks away.
 */
 
 using UnityEngine;
 
 /// <summary>
-/// Controls the Stage 3 locked door.
+/// Controls the Stage 3 door using animation triggers.
 /// </summary>
 public class Stage3Door : MonoBehaviour
 {
@@ -17,7 +17,7 @@ public class Stage3Door : MonoBehaviour
     [SerializeField] private Animator doorAnimator;
 
     /// <summary>
-    /// Collider that blocks the player before the door opens.
+    /// Collider that blocks the door.
     /// </summary>
     [SerializeField] private Collider doorCollider;
 
@@ -27,33 +27,28 @@ public class Stage3Door : MonoBehaviour
     [SerializeField] private KeyCode openKey = KeyCode.E;
 
     /// <summary>
-    /// Time before the door collider turns off.
-    /// </summary>
-    [SerializeField] private float disableColliderDelay = 1f;
-
-    /// <summary>
     /// Checks if the player is near the door.
     /// </summary>
     private bool playerNear;
 
     /// <summary>
-    /// Checks if the door has already opened.
+    /// Checks if the door is currently open.
     /// </summary>
-    private bool opened;
+    private bool doorOpen;
 
     /// <summary>
-    /// Checks if the player presses E near the door.
+    /// Checks for E input near the door.
     /// </summary>
     private void Update()
     {
-        if (playerNear && Input.GetKeyDown(openKey) && !opened)
+        if (playerNear && Input.GetKeyDown(openKey))
         {
             TryOpenDoor();
         }
     }
 
     /// <summary>
-    /// Detects when the player enters the door trigger.
+    /// Detects when player enters the door trigger.
     /// </summary>
     /// <param name="other">Object entering the trigger.</param>
     private void OnTriggerEnter(Collider other)
@@ -70,7 +65,7 @@ public class Stage3Door : MonoBehaviour
     }
 
     /// <summary>
-    /// Detects when the player exits the door trigger.
+    /// Detects when player exits the door trigger.
     /// </summary>
     /// <param name="other">Object exiting the trigger.</param>
     private void OnTriggerExit(Collider other)
@@ -78,6 +73,11 @@ public class Stage3Door : MonoBehaviour
         if (IsPlayer(other))
         {
             playerNear = false;
+
+            if (doorOpen)
+            {
+                CloseDoor();
+            }
 
             if (GameManager.instance != null)
             {
@@ -89,15 +89,15 @@ public class Stage3Door : MonoBehaviour
     /// <summary>
     /// Checks if the collider belongs to the player.
     /// </summary>
-    /// <param name="other">Collider to check.</param>
-    /// <returns>True if the collider belongs to the player.</returns>
+    /// <param name="other">Collider being checked.</param>
+    /// <returns>True if the collider is the player.</returns>
     private bool IsPlayer(Collider other)
     {
         return other.CompareTag("Player") || other.GetComponentInParent<PlayerHealth>() != null;
     }
 
     /// <summary>
-    /// Opens the door if all Stage 3 coins have been collected.
+    /// Opens the door if Stage 3 coins are collected.
     /// </summary>
     private void TryOpenDoor()
     {
@@ -108,14 +108,18 @@ public class Stage3Door : MonoBehaviour
 
         if (GameManager.instance.CanOpenStage3Door())
         {
-            opened = true;
+            doorOpen = true;
 
             if (doorAnimator != null)
             {
+                doorAnimator.ResetTrigger("CloseDoor");
                 doorAnimator.SetTrigger("OpenDoor");
             }
 
-            Invoke(nameof(TurnOffDoorCollider), disableColliderDelay);
+            if (doorCollider != null)
+            {
+                doorCollider.enabled = false;
+            }
 
             GameManager.instance.ShowMessage("Door opened!");
         }
@@ -126,13 +130,21 @@ public class Stage3Door : MonoBehaviour
     }
 
     /// <summary>
-    /// Turns off the door collider after the animation starts.
+    /// Closes the door.
     /// </summary>
-    private void TurnOffDoorCollider()
+    private void CloseDoor()
     {
+        doorOpen = false;
+
+        if (doorAnimator != null)
+        {
+            doorAnimator.ResetTrigger("OpenDoor");
+            doorAnimator.SetTrigger("CloseDoor");
+        }
+
         if (doorCollider != null)
         {
-            doorCollider.enabled = false;
+            doorCollider.enabled = true;
         }
     }
 }
