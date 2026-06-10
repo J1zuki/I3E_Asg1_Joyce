@@ -1,44 +1,42 @@
 /*
-* Author: Your Name
-* Date: 2026
 * Description: Opens the Stage 3 door with E after 4 coins, and closes it when player walks away.
 */
 
 using UnityEngine;
 
-/// <summary>
 /// Controls the Stage 3 door using animation triggers.
-/// </summary>
 public class Stage3Door : MonoBehaviour
 {
-    /// <summary>
     /// Animator attached to the door object.
-    /// </summary>
     [SerializeField] private Animator doorAnimator;
 
-    /// <summary>
     /// Collider that blocks the door.
-    /// </summary>
     [SerializeField] private Collider doorCollider;
 
-    /// <summary>
     /// Key used to open the door.
-    /// </summary>
     [SerializeField] private KeyCode openKey = KeyCode.E;
 
-    /// <summary>
     /// Checks if the player is near the door.
-    /// </summary>
     private bool playerNear;
 
-    /// <summary>
     /// Checks if the door is currently open.
-    /// </summary>
     private bool doorOpen;
 
-    /// <summary>
+    /// Gets needed components when the game starts.
+    private void Start()
+    {
+        if (doorAnimator == null)
+        {
+            doorAnimator = GetComponent<Animator>();
+        }
+
+        if (doorCollider == null)
+        {
+            doorCollider = GetComponent<Collider>();
+        }
+    }
+
     /// Checks for E input near the door.
-    /// </summary>
     private void Update()
     {
         if (playerNear && Input.GetKeyDown(openKey))
@@ -47,10 +45,7 @@ public class Stage3Door : MonoBehaviour
         }
     }
 
-    /// <summary>
     /// Detects when player enters the door trigger.
-    /// </summary>
-    /// <param name="other">Object entering the trigger.</param>
     private void OnTriggerEnter(Collider other)
     {
         if (IsPlayer(other))
@@ -59,15 +54,19 @@ public class Stage3Door : MonoBehaviour
 
             if (GameManager.instance != null)
             {
-                GameManager.instance.ShowMessage("Press E to open door");
+                if (doorOpen)
+                {
+                    GameManager.instance.ShowMessage("Door is open");
+                }
+                else
+                {
+                    GameManager.instance.ShowMessage("Press E to open door");
+                }
             }
         }
     }
 
-    /// <summary>
     /// Detects when player exits the door trigger.
-    /// </summary>
-    /// <param name="other">Object exiting the trigger.</param>
     private void OnTriggerExit(Collider other)
     {
         if (IsPlayer(other))
@@ -86,21 +85,20 @@ public class Stage3Door : MonoBehaviour
         }
     }
 
-    /// <summary>
     /// Checks if the collider belongs to the player.
-    /// </summary>
-    /// <param name="other">Collider being checked.</param>
-    /// <returns>True if the collider is the player.</returns>
     private bool IsPlayer(Collider other)
     {
         return other.CompareTag("Player") || other.GetComponentInParent<PlayerHealth>() != null;
     }
 
-    /// <summary>
     /// Opens the door if Stage 3 coins are collected.
-    /// </summary>
     private void TryOpenDoor()
     {
+        if (doorOpen)
+        {
+            return;
+        }
+
         if (GameManager.instance == null)
         {
             return;
@@ -129,9 +127,7 @@ public class Stage3Door : MonoBehaviour
         }
     }
 
-    /// <summary>
     /// Closes the door.
-    /// </summary>
     private void CloseDoor()
     {
         doorOpen = false;

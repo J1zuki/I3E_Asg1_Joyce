@@ -5,44 +5,31 @@
 using UnityEngine;
 using TMPro;
 
-/// <summary>
 /// Manages player health.
-/// </summary>
 public class PlayerHealth : MonoBehaviour
 {
-    /// <summary>
     /// Player's maximum health.
-    /// </summary>
     [SerializeField] private float maxHealth = 100f;
 
-    /// <summary>
     /// Health text on UI.
-    /// </summary>
-    [SerializeField] private TMP_Text healthText;
+    [SerializeField] private TextMeshProUGUI healthText;
 
-    /// <summary>
     /// Current health of the player.
-    /// </summary>
     private float currentHealth;
 
-    /// <summary>
     /// Checks if the player is dead.
-    /// </summary>
     private bool dead;
 
-    /// <summary>
     /// Sets health at the start.
-    /// </summary>
     private void Start()
     {
         currentHealth = maxHealth;
+        dead = false;
+
         UpdateHealthUI();
     }
 
-    /// <summary>
     /// Damages the player.
-    /// </summary>
-    /// <param name="damage">Damage amount.</param>
     public void TakeDamage(float damage)
     {
         if (dead)
@@ -51,6 +38,12 @@ public class PlayerHealth : MonoBehaviour
         }
 
         currentHealth -= damage;
+
+        if (currentHealth < 0f)
+        {
+            currentHealth = 0f;
+        }
+
         UpdateHealthUI();
 
         if (currentHealth <= 0f)
@@ -64,9 +57,7 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
-    /// <summary>
     /// Updates health text.
-    /// </summary>
     private void UpdateHealthUI()
     {
         if (healthText != null)
