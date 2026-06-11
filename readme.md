@@ -18,16 +18,16 @@ Controls
 Features Implemented
 
 Player Controller
-- The project uses a first-person player controller so the player can move around the 3D environment.
+- Project uses a first-person player controller so the player can move around the 3D environment.
 
 Collectibles
-- Coins can be collected when the player is near them and presses the E key. Each coin adds score to the player.
+- Coins can be collected when the player is near them and presses the 'E' key. Each coin adds score to the player.
 
 Stage 3 Door
-- The Stage 3 door only opens after the player collects all required Stage 3 coins. The player presses E near the door to open it. The door closes again when the player walks away.
+- The Stage 3 door only opens after the player collects all required Stage 3 coins. The player then can press 'E' near the door to open it. The door closes again when the player press 'E' once more.
 
 Hazards
-- Hazard objects damage the player over time while the player stays inside the hazard area.
+- Hazard objects damage the player if the player ever jump into the water.
 
 Moving Obstacles
 - Some obstacles move back and forth to create challenge for the player.
@@ -55,7 +55,7 @@ Scripts Used
 
 ---
 Unity Setup
-- The project was created in Unity using the Universal 3D / URP setup. The project uses GameObjects, Components, Colliders, Triggers, Rigidbody, TextMeshPro UI, Audio Source, and animation triggers.
+- The project was created in Unity using the Universal 3D / URP setup. The project contains GameObjects, Components, Colliders, Triggers, Rigidbody, TextMeshPro UI, Audio Source, and animation triggers.
 
 AI Usage
 - AI was used to help refine the code structure, improve comments, check for errors, and make sure the scripts were easier to understand. The final code was tested and adjusted in Unity.
