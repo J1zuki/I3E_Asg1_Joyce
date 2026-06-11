@@ -13,11 +13,12 @@ Controls
 - Space – Jump
 - E – Interact / Collect coin / Open door
 - R – Restart after winning or losing
-- Features Implemented
-- Player Controller
 
 ---
-The project uses a first-person player controller so the player can move around the 3D environment.
+Features Implemented
+
+Player Controller
+- The project uses a first-person player controller so the player can move around the 3D environment.
 
 Collectibles
 - Coins can be collected when the player is near them and presses the E key. Each coin adds score to the player.
